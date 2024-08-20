@@ -3537,11 +3537,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Luis\\Desktop\\Nueva carpeta\\GeoVerificationProject\\GeoVerificationProject.csproj",
+      "projectUniqueName": "C:\\Users\\Luis\\Desktop\\ProyectosW7\\GeoVerificationProject\\GeoVerificationProject.csproj",
       "projectName": "GeoVerificationProject",
-      "projectPath": "C:\\Users\\Luis\\Desktop\\Nueva carpeta\\GeoVerificationProject\\GeoVerificationProject.csproj",
+      "projectPath": "C:\\Users\\Luis\\Desktop\\ProyectosW7\\GeoVerificationProject\\GeoVerificationProject.csproj",
       "packagesPath": "C:\\Users\\Luis\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Luis\\Desktop\\Nueva carpeta\\GeoVerificationProject\\obj\\",
+      "outputPath": "C:\\Users\\Luis\\Desktop\\ProyectosW7\\GeoVerificationProject\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Luis\\AppData\\Roaming\\NuGet\\NuGet.Config",

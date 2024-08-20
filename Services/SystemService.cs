@@ -18,7 +18,6 @@ public class SystemService
         process.Start();
         string output = process.StandardOutput.ReadToEnd();
         process.WaitForExit();
-        var lines = output.Split('\n');
-        return lines.Length > 1 ? lines[1].Trim() : "Unknown";
+        return output.Split('\n')[1].Trim();
     }
 }

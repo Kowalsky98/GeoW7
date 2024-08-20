@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net; 
 
 class Program
 {
     static void Main(string[] args)
     {
-        
-        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
-
         var config = new AppConfig();
         var systemService = new SystemService();
         var geoService = new GeoService();
@@ -28,27 +24,60 @@ class Program
             Console.WriteLine($"Geo - Latitud: {latitude}, Longitud: {longitude}");
 
             var directories = directoryService.GetDirectoriesFromApi();
-            bool foundInvalidDirectory = false;
+            bool foundNotAllowed = false;
+            bool missingAllowed = false;
 
-            foreach (var (path, isAllowed) in directories)
+            foreach (var (path, isAllow) in directories)
             {
-                if (!isAllowed && !string.IsNullOrEmpty(path) && File.Exists(path))
+                bool existsAsFile = File.Exists(path);
+                bool existsAsDirectory = Directory.Exists(path);
+
+                if (isAllow)
                 {
-                    alertService.SendGeoAlert(serial, $"Alerta: {path}", latitude, longitude, true);
-                    Console.WriteLine($"ALERTA: {path}");
-                    foundInvalidDirectory = true;
+                    if (!existsAsFile && !existsAsDirectory)
+                    {
+                        Console.WriteLine($"Directorio permitido faltante: {path}");
+                        missingAllowed = true;
+                    }
+                }
+                else
+                {
+                    if (existsAsFile || existsAsDirectory)
+                    {
+                        alertService.SendGeoAlert(serial, $"Alerta: {path}", latitude, longitude, true);
+                        Console.WriteLine($"Alerta enviada para: {path}");
+                        foundNotAllowed = true;
+                    }
                 }
             }
 
-            if (!foundInvalidDirectory)
+            if (missingAllowed)
             {
-                alertService.SendGeoAlert(serial, "OK", latitude, longitude, false);
-                Console.WriteLine("OK ");
+                ExecutePostExe(config.PostFilePath);
+            }
+
+            if (!foundNotAllowed && !missingAllowed)
+            {
+                alertService.SendGeoAlert(serial, "todo bien", latitude, longitude, false);
+                Console.WriteLine("todo bien.");
             }
         }
         catch (Exception e)
         {
             Console.WriteLine($"An error occurred: {e.Message}");
+        }
+    }
+
+    static void ExecutePostExe(string postFilePath)
+    {
+        try
+        {
+            Console.WriteLine($"Ejecutando {postFilePath}...");
+            Process.Start(postFilePath);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error al ejecutar {postFilePath}: {e.Message}");
         }
     }
 }

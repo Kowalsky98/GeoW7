@@ -13,30 +13,32 @@ public class DirectoryService
         _config = config ?? throw new ArgumentNullException(nameof(config));
     }
 
-    public List<(string path, bool isAllowed)> GetDirectoriesFromApi()
+    public List<(string path, bool isAllow)> GetDirectoriesFromApi()
     {
         var response = _client.GetAsync(_config.DirectoriesApiUrl).Result;
         response.EnsureSuccessStatusCode();
         var jsonResponse = response.Content.ReadAsStringAsync().Result;
 
         JObject jsonObject = JObject.Parse(jsonResponse);
-        JArray items = (JArray)jsonObject["items"];
+        JArray rows = jsonObject["rows"] as JArray; 
 
-        if (items == null) {
-            throw new InvalidOperationException("The 'items' JSON array is null or not present in the response.");
+        if (rows == null || !rows.HasValues)
+        {
+            throw new InvalidOperationException("The 'rows' JSON array is null, empty, or not present in the response.");
         }
 
-        var directories = new List<(string path, bool isAllowed)>();
-        foreach (var item in items)
+        var directories = new List<(string path, bool isAllow)>();
+        foreach (var row in rows)
         {
-            string path = item["path"].ToString().Replace("\\\\", "\\");
-            bool isAllowed = (bool)item["isAllow"];
+            string path = row["path"]?.ToString().Replace("\\\\", "\\") ?? string.Empty;
+            bool isAllow = row["isAllow"]?.Value<bool>() ?? false;
             
-            if (File.Exists(path) || Directory.Exists(path))
+            if (!string.IsNullOrEmpty(path))
             {
-                directories.Add((path, isAllowed));
+                directories.Add((path, isAllow));
             }
         }
+
         return directories;
     }
 }
