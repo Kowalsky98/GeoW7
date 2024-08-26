@@ -1,0 +1,1 @@
+Proyecto en revision la compatibilidad del propio proyecto da como resultado que el SO de w7 no es lo suficientemente actualizado para correr todas las funciones del proyecto realizado en C# para desarrollar el mismo de manera efectiva
